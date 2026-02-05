@@ -48,7 +48,7 @@ source venv/bin/activate
 
 echo -e "${YELLOW}[*] Installing Python dependencies...${NC}"
 pip install --upgrade pip -q
-pip install streamlit pandas requests beautifulsoup4 -q
+pip install streamlit pandas requests beautifulsoup4 streamlit-autorefresh -q
 
 echo -e "${YELLOW}[*] Creating data directory...${NC}"
 mkdir -p .6319sqli_data
