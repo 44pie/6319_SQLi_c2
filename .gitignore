@@ -1,0 +1,7 @@
+__pycache__/
+*.pyc
+.6319sqli_data/
+venv/
+*.log
+.streamlit/
+*.pid
