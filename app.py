@@ -15,7 +15,9 @@ import socket
 
 st.set_page_config(page_title="6319sqli", layout="wide", initial_sidebar_state="collapsed")
 
-DATA_DIR = '/home/runner/workspace/.6319sqli_data'
+# Auto-detect installation directory
+SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+DATA_DIR = os.path.join(SCRIPT_DIR, '.6319sqli_data')
 
 # Start action server in background thread
 import threading
@@ -419,7 +421,7 @@ def load_config():
     if os.path.exists(CONFIG_FILE):
         with open(CONFIG_FILE) as f:
             return json.load(f)
-    return {'scan_paths': [os.getcwd()]}
+    return {'scan_paths': [SCRIPT_DIR, os.path.join(SCRIPT_DIR, 'ttt')]}
 
 config = load_config()
 
