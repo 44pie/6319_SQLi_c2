@@ -354,10 +354,17 @@ if os.path.exists(ACTION_FILE):
 
 st.markdown("""
 <style>
-#MainMenu, header, footer, [data-testid="stToolbar"], [data-testid="stDecoration"], 
-[data-testid="stStatusWidget"], .stDeployButton, [data-testid="stHeader"] { display: none !important; }
-.block-container { padding: 0 !important; max-width: 100% !important; }
-[data-testid="stAppViewContainer"] { padding: 0 !important; }
+html, body, [data-testid="stAppViewContainer"], [data-testid="stApp"],
+.main, .stApp, [data-testid="stAppViewBlockContainer"] {
+    margin: 0 !important; padding: 0 !important; overflow: hidden !important;
+    background: #2e3440 !important;
+}
+#MainMenu, header, footer, [data-testid="stToolbar"], [data-testid="stDecoration"],
+[data-testid="stStatusWidget"], .stDeployButton, [data-testid="stHeader"],
+[data-testid="stBottom"], [data-testid="stSidebar"] { display: none !important; height: 0 !important; }
+.block-container { padding: 0 !important; max-width: 100% !important; margin: 0 !important; }
+section[data-testid="stSidebar"] { display: none !important; }
+div[data-testid="stVerticalBlock"] { gap: 0 !important; }
 </style>
 """, unsafe_allow_html=True)
 
@@ -884,11 +891,16 @@ function clearOutput() {{
 # Render SQLMAP HTML and capture any action from component
 component_value = components.html(html, height=900, scrolling=False)
 st.markdown("""<style>
-[data-testid="stAppViewContainer"] > div > div > div > div {padding:0!important;}
-iframe[title="streamlit_components.v1.components.html"],
-iframe[title="streamlit_components.v1.components.html"] ~ div,
-div:has(> iframe[title="streamlit_components.v1.components.html"]) {
-    height:100vh!important;position:fixed!important;top:0!important;left:0!important;width:100vw!important;z-index:9999!important;border:none!important;
+iframe[title="streamlit_components.v1.components.html"] {
+    height:100vh!important;width:100vw!important;position:fixed!important;
+    top:0!important;left:0!important;z-index:9999!important;border:none!important;
+}
+div:has(> iframe[title="streamlit_components.v1.components.html"]),
+div[data-testid="stHtml"]:has(iframe),
+div[data-testid="element-container"]:has(iframe) {
+    height:100vh!important;width:100vw!important;position:fixed!important;
+    top:0!important;left:0!important;z-index:9998!important;
+    max-height:none!important;overflow:visible!important;
 }
 </style>""", unsafe_allow_html=True)
 
