@@ -704,25 +704,26 @@ body {{ font-family: 'JetBrains Mono', monospace; background: var(--bg0); color:
 </div>
 <script>
 // Initialize Streamlit component communication
+var _lastH = 0;
 function getParentHeight() {{
     try {{ return window.parent.innerHeight; }} catch(e) {{ return 900; }}
+}}
+function applyHeight() {{
+    var h = getParentHeight();
+    if (h === _lastH) return;
+    _lastH = h;
+    document.querySelector('.container').style.height = h + 'px';
+    if (window.Streamlit) window.Streamlit.setFrameHeight(h);
 }}
 function initStreamlit() {{
     if (window.Streamlit) {{
         window.Streamlit.setComponentReady();
-        var h = getParentHeight();
-        window.Streamlit.setFrameHeight(h);
-        document.querySelector('.container').style.height = h + 'px';
+        applyHeight();
     }}
 }}
 window.addEventListener('load', initStreamlit);
-function resizeFit() {{
-    var h = getParentHeight();
-    if (window.Streamlit) window.Streamlit.setFrameHeight(h);
-    document.querySelector('.container').style.height = h + 'px';
-}}
-window.addEventListener('resize', resizeFit);
-setInterval(resizeFit, 500);
+window.addEventListener('resize', applyHeight);
+setInterval(applyHeight, 2000);
 
 // Streamlit communication function
 function sendAction(data) {{
