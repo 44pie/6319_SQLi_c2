@@ -27,9 +27,15 @@ if [ "$EUID" -ne 0 ]; then
     exit 1
 fi
 
+PANEL_PORT=$(shuf -i 54209-60739 -n 1)
+PANEL_PATH=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 34 | head -n 1)
+
+echo -e "${YELLOW}[*] Generated port: $PANEL_PORT${NC}"
+echo -e "${YELLOW}[*] Generated secret path: $PANEL_PATH${NC}"
+
 echo -e "${YELLOW}[*] Installing system dependencies...${NC}"
 apt-get update -qq
-apt-get install -y python3 python3-pip python3-venv sqlmap git curl wget -qq
+apt-get install -y python3 python3-pip python3-venv sqlmap git curl wget proxychains4 -qq
 
 echo -e "${YELLOW}[*] Creating installation directory...${NC}"
 mkdir -p "$INSTALL_DIR"
@@ -53,6 +59,29 @@ pip install streamlit pandas requests beautifulsoup4 streamlit-autorefresh -q
 echo -e "${YELLOW}[*] Creating data directory...${NC}"
 mkdir -p .6319sqli_data
 
+echo -e "${YELLOW}[*] Saving panel access config...${NC}"
+cat > .6319sqli_data/panel.json << EOF
+{"port": $PANEL_PORT, "path": "$PANEL_PATH"}
+EOF
+
+echo -e "${YELLOW}[*] Creating Streamlit config...${NC}"
+mkdir -p .streamlit
+cat > .streamlit/config.toml << EOF
+[server]
+port = $PANEL_PORT
+address = "0.0.0.0"
+baseUrlPath = "$PANEL_PATH"
+headless = true
+enableCORS = false
+enableXsrfProtection = false
+
+[browser]
+gatherUsageStats = false
+
+[theme]
+base = "dark"
+EOF
+
 echo -e "${YELLOW}[*] Creating systemd service...${NC}"
 cat > /etc/systemd/system/6319sqli.service << EOF
 [Unit]
@@ -64,7 +93,7 @@ Type=simple
 User=root
 WorkingDirectory=$INSTALL_DIR
 Environment="PATH=$INSTALL_DIR/venv/bin:/usr/local/bin:/usr/bin:/bin"
-ExecStart=$INSTALL_DIR/venv/bin/streamlit run app.py --server.port 5000 --server.address 0.0.0.0
+ExecStart=$INSTALL_DIR/venv/bin/streamlit run app.py
 Restart=always
 RestartSec=3
 
@@ -84,14 +113,15 @@ echo -e "${GREEN}========================================${NC}"
 echo -e "${GREEN}[+] Installation complete!${NC}"
 echo -e "${GREEN}========================================${NC}"
 echo ""
-echo -e "${CYAN}Access panel: http://$IP:5000${NC}"
+echo -e "${CYAN}Access panel: http://$IP:$PANEL_PORT/$PANEL_PATH${NC}"
+echo ""
+echo -e "${RED}SAVE THIS! Port and path are random and won't be shown again.${NC}"
+echo -e "${RED}Config saved to: $INSTALL_DIR/.6319sqli_data/panel.json${NC}"
 echo ""
 echo -e "Commands:"
 echo -e "  ${YELLOW}systemctl status 6319sqli${NC}  - Check status"
 echo -e "  ${YELLOW}systemctl restart 6319sqli${NC} - Restart panel"
 echo -e "  ${YELLOW}systemctl stop 6319sqli${NC}    - Stop panel"
 echo -e "  ${YELLOW}journalctl -u 6319sqli -f${NC}  - View logs"
-echo ""
-echo -e "${CYAN}SQLMap output directory: $INSTALL_DIR/ttt/sql_out/${NC}"
-echo -e "${CYAN}Create target dirs there with sqlmap --output-dir=$INSTALL_DIR/ttt/sql_out/TARGET${NC}"
+echo -e "  ${YELLOW}cat $INSTALL_DIR/.6319sqli_data/panel.json${NC}  - View access info"
 echo ""
