@@ -542,8 +542,8 @@ for key, h in sorted_hosts:
     
     hosts_html += f'''
     <div class="{cls}" onclick="select('{key}')">
-        <div class="host-badges">{badges}</div>
         <div class="host-domain">{h['domain']}</div>
+        <div class="host-badges-row">{badges}</div>
         <div class="host-info">
             DBMS: <span>{h.get('dbms') or 'unknown'}</span><br>
             Params: <span>{', '.join((h.get('parameters') or [])[:2]) or 'none'}</span><br>
@@ -594,12 +594,12 @@ body {{ font-family: 'JetBrains Mono', monospace; background: var(--bg0); color:
 .host:hover {{ background: var(--bg3); }}
 .host.selected {{ background: var(--bg3); border-color: var(--accent); }}
 .host.injected {{ border-left-color: var(--green); }}
-.host-domain {{ font-weight: 600; font-size: 12px; margin-bottom: 6px; padding-right: 100px; }}
+.host-domain {{ font-weight: 600; font-size: 12px; margin-bottom: 2px; }}
 .host-domain::before {{ content: "● "; color: var(--yellow); }}
 .host.injected .host-domain::before {{ color: var(--green); }}
-.host-info {{ font-size: 10px; color: var(--fg3); line-height: 1.6; }}
+.host-badges-row {{ display: flex; flex-wrap: wrap; gap: 3px; margin-bottom: 4px; }}
+.host-info {{ font-size: 10px; color: var(--fg3); line-height: 1.6; clear: both; }}
 .host-info span {{ color: var(--accent); }}
-.host-badges {{ position: absolute; top: 8px; right: 8px; display: flex; flex-wrap: wrap; gap: 3px; max-width: 100px; justify-content: flex-end; }}
 .badge {{ font-size: 8px; padding: 2px 5px; border-radius: 2px; font-weight: 500; }}
 .badge-inj {{ background: var(--green); color: var(--bg0); }}
 .badge-notinj {{ background: var(--yellow); color: var(--bg0); }}
@@ -617,7 +617,7 @@ body {{ font-family: 'JetBrains Mono', monospace; background: var(--bg0); color:
 .detail-tab.active {{ background: var(--accent); color: var(--bg0); }}
 .detail-tab.sqlmap {{ background: var(--purple); color: var(--fg); }}
 .detail-tab.sqlmap.active {{ background: var(--green); color: var(--bg0); }}
-.detail-content {{ flex: 1; overflow-y: auto; padding: 16px; }}
+.detail-content {{ flex: 1; overflow: hidden; padding: 16px; min-height: 0; display: flex; flex-direction: column; }}
 .info-grid {{ display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }}
 .info-item {{ background: var(--bg2); padding: 12px; border-radius: 4px; }}
 .info-label {{ font-size: 9px; color: var(--fg3); letter-spacing: 1px; margin-bottom: 4px; }}
@@ -638,18 +638,18 @@ body {{ font-family: 'JetBrains Mono', monospace; background: var(--bg0); color:
 .dump-tables {{ padding: 8px; display: flex; flex-wrap: wrap; gap: 6px; }}
 .dump-table {{ padding: 6px 12px; background: var(--bg1); border-radius: 3px; font-size: 11px; cursor: pointer; }}
 .dump-table:hover {{ background: var(--accent); color: var(--bg0); }}
-.pty-container {{ display: flex; flex-direction: column; height: 100%; }}
+.pty-container {{ display: flex; flex-direction: column; height: 100%; min-height: 0; overflow: hidden; }}
 .pty-quick {{ display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 12px; }}
 .pty-btn {{ padding: 6px 12px; background: var(--bg2); border: 1px solid var(--bg3); color: var(--fg3); font-size: 10px; cursor: pointer; border-radius: 3px; font-family: inherit; }}
 .pty-btn:hover {{ background: var(--bg3); color: var(--fg); border-color: var(--accent); }}
-.pty-terminal {{ flex: 1; background: var(--bg0); border-radius: 4px; padding: 12px; font-size: 11px; overflow-y: auto; min-height: 200px; }}
+.pty-terminal {{ flex: 1; background: var(--bg0); border-radius: 4px; padding: 12px; font-size: 11px; overflow-y: auto; min-height: 0; }}
 .pty-output {{ white-space: pre-wrap; word-wrap: break-word; color: var(--fg3); line-height: 1.4; }}
 .pty-cmd {{ color: var(--green); }}
 .pty-result {{ color: var(--fg3); }}
 .pty-error {{ color: var(--red); }}
 .pty-success {{ color: var(--green); font-weight: bold; }}
-.pty-input-row {{ display: flex; gap: 8px; margin-top: 8px; }}
-.pty-input {{ flex: 1; background: var(--bg2); border: 1px solid var(--bg3); color: var(--fg); padding: 10px 14px; border-radius: 4px; font-family: inherit; font-size: 11px; min-height: 60px; resize: vertical; word-break: break-all; white-space: pre-wrap; }}
+.pty-input-row {{ display: flex; gap: 8px; margin-top: 8px; flex-shrink: 0; }}
+.pty-input {{ flex: 1; background: var(--bg2); border: 1px solid var(--bg3); color: var(--fg); padding: 8px 12px; border-radius: 4px; font-family: inherit; font-size: 11px; min-height: 40px; max-height: 60px; resize: none; word-break: break-all; white-space: pre-wrap; }}
 .pty-input:focus {{ outline: none; border-color: var(--accent); }}
 .pty-exec {{ padding: 6px 14px; background: var(--green); border: none; color: var(--bg0); font-family: inherit; font-size: 10px; letter-spacing: 1px; cursor: pointer; border-radius: 3px; font-weight: bold; }}
 .pty-exec:hover {{ background: var(--accent); }}
