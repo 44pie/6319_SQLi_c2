@@ -355,16 +355,24 @@ if os.path.exists(ACTION_FILE):
 st.markdown("""
 <style>
 html, body, [data-testid="stAppViewContainer"], [data-testid="stApp"],
-.main, .stApp, [data-testid="stAppViewBlockContainer"] {
+.main, .stApp, [data-testid="stAppViewBlockContainer"],
+[data-testid="stMainBlockContainer"], .stMainBlockContainer {
     margin: 0 !important; padding: 0 !important; overflow: hidden !important;
-    background: #2e3440 !important;
+    background: #2e3440 !important; max-width: 100% !important;
 }
 #MainMenu, header, footer, [data-testid="stToolbar"], [data-testid="stDecoration"],
 [data-testid="stStatusWidget"], .stDeployButton, [data-testid="stHeader"],
-[data-testid="stBottom"], [data-testid="stSidebar"] { display: none !important; height: 0 !important; }
-.block-container { padding: 0 !important; max-width: 100% !important; margin: 0 !important; }
-section[data-testid="stSidebar"] { display: none !important; }
-div[data-testid="stVerticalBlock"] { gap: 0 !important; }
+[data-testid="stBottom"], [data-testid="stSidebar"], section[data-testid="stSidebar"],
+[data-testid="stHeaderActionElements"], [data-testid="stAppDeployButton"] {
+    display: none !important; height: 0 !important; min-height: 0 !important;
+    margin: 0 !important; padding: 0 !important; visibility: hidden !important;
+    position: absolute !important; top: -9999px !important;
+}
+.block-container, [data-testid="stVerticalBlock"],
+.stVerticalBlock, [data-testid="stElementContainer"] {
+    padding: 0 !important; margin: 0 !important; gap: 0 !important;
+    max-width: 100% !important; width: 100% !important;
+}
 </style>
 """, unsafe_allow_html=True)
 
