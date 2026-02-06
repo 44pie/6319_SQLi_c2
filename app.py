@@ -374,6 +374,25 @@ html, body, [data-testid="stAppViewContainer"], [data-testid="stApp"],
     max-width: 100% !important; width: 100% !important;
 }
 </style>
+<script>
+function fixIframe() {
+    var iframes = parent.document.querySelectorAll('iframe');
+    for (var i = 0; i < iframes.length; i++) {
+        var f = iframes[i];
+        if (f.height > 500 || f.style.height.indexOf('2000') > -1 || f.title.indexOf('components') > -1) {
+            f.style.cssText = 'position:fixed!important;top:0!important;left:0!important;width:100vw!important;height:100vh!important;border:none!important;z-index:99999!important;';
+            var p = f.parentElement;
+            while (p && p !== document.body) {
+                p.style.cssText += 'position:fixed!important;top:0!important;left:0!important;width:100vw!important;height:100vh!important;overflow:visible!important;max-height:none!important;z-index:99998!important;';
+                p = p.parentElement;
+            }
+            break;
+        }
+    }
+}
+fixIframe();
+setInterval(fixIframe, 1000);
+</script>
 """, unsafe_allow_html=True)
 
 
