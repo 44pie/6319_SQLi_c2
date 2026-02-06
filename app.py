@@ -570,9 +570,9 @@ html = f'''
     --purple: #b48ead; --orange: #d08770; --cyan: #8fbcbb;
 }}
 * {{ margin: 0; padding: 0; box-sizing: border-box; }}
-html, body {{ height: 100%; width: 100%; overflow: hidden; margin: 0; padding: 0; }}
-body {{ font-family: 'JetBrains Mono', monospace; background: var(--bg0); color: var(--fg); }}
-.container {{ display: flex; flex-direction: column; height: 100vh; padding: 8px; overflow: hidden; }}
+html, body {{ height: 100%; width: 100%; margin: 0; padding: 0; overflow: hidden; }}
+body {{ font-family: 'JetBrains Mono', monospace; background: var(--bg0); color: var(--fg); display: flex; flex-direction: column; }}
+.container {{ flex: 1; display: flex; flex-direction: column; padding: 8px; min-height: 0; overflow: hidden; }}
 .header {{ display: flex; align-items: center; justify-content: space-between; background: var(--bg1); padding: 8px 16px; border-radius: 4px; margin-bottom: 8px; }}
 .logo {{ color: var(--accent); font-size: 14px; font-weight: bold; }}
 .stats {{ display: flex; gap: 24px; }}
@@ -705,25 +705,26 @@ body {{ font-family: 'JetBrains Mono', monospace; background: var(--bg0); color:
 <script>
 // Initialize Streamlit component communication
 var _lastH = 0;
-function getParentHeight() {{
-    try {{ return window.parent.innerHeight; }} catch(e) {{ return 900; }}
+function getH() {{
+    try {{ if (window.parent && window.parent.innerHeight) return window.parent.innerHeight; }} catch(e) {{}}
+    return window.innerHeight || 900;
 }}
-function applyHeight() {{
-    var h = getParentHeight();
-    if (h === _lastH) return;
+function applyH() {{
+    var h = getH();
+    if (Math.abs(h - _lastH) < 2) return;
     _lastH = h;
-    document.querySelector('.container').style.height = h + 'px';
     if (window.Streamlit) window.Streamlit.setFrameHeight(h);
 }}
 function initStreamlit() {{
     if (window.Streamlit) {{
         window.Streamlit.setComponentReady();
-        applyHeight();
+        applyH();
     }}
 }}
 window.addEventListener('load', initStreamlit);
-window.addEventListener('resize', applyHeight);
-setInterval(applyHeight, 2000);
+window.addEventListener('resize', function() {{ setTimeout(applyH, 50); }});
+setTimeout(applyH, 500);
+setTimeout(applyH, 1500);
 
 // Streamlit communication function
 function sendAction(data) {{
