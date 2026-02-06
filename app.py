@@ -469,9 +469,12 @@ def parse_sqlmap_log(log_path):
                         sqlmap_match = re.search(r'(/\S+sqlmap\S*)\s+(.+)', line)
                         if sqlmap_match:
                             result['sqlmap_bin'] = sqlmap_match.group(1)
-                            result['original_cmd'] = sqlmap_match.group(1) + ' ' + sqlmap_match.group(2).strip()
+                            result['original_cmd'] = 'proxychains4 -q python3 ' + sqlmap_match.group(1) + ' ' + sqlmap_match.group(2).strip()
                         else:
-                            result['original_cmd'] = line
+                            if not line.startswith('proxychains4'):
+                                result['original_cmd'] = 'proxychains4 -q python3 ' + line
+                            else:
+                                result['original_cmd'] = line
                         break
     except:
         pass
@@ -630,7 +633,7 @@ body {{ font-family: 'JetBrains Mono', monospace; background: var(--bg0); color:
 .pty-error {{ color: var(--red); }}
 .pty-success {{ color: var(--green); font-weight: bold; }}
 .pty-input-row {{ display: flex; gap: 8px; margin-top: 8px; }}
-.pty-input {{ flex: 1; background: var(--bg2); border: 1px solid var(--bg3); color: var(--fg); padding: 10px 14px; border-radius: 4px; font-family: inherit; font-size: 11px; min-height: 60px; resize: vertical; }}
+.pty-input {{ flex: 1; background: var(--bg2); border: 1px solid var(--bg3); color: var(--fg); padding: 10px 14px; border-radius: 4px; font-family: inherit; font-size: 11px; min-height: 60px; resize: vertical; word-break: break-all; white-space: pre-wrap; }}
 .pty-input:focus {{ outline: none; border-color: var(--accent); }}
 .pty-exec {{ padding: 6px 14px; background: var(--green); border: none; color: var(--bg0); font-family: inherit; font-size: 10px; letter-spacing: 1px; cursor: pointer; border-radius: 3px; font-weight: bold; }}
 .pty-exec:hover {{ background: var(--accent); }}
@@ -688,10 +691,13 @@ body {{ font-family: 'JetBrains Mono', monospace; background: var(--bg0); color:
 function initStreamlit() {{
     if (window.Streamlit) {{
         window.Streamlit.setComponentReady();
-        window.Streamlit.setFrameHeight(850);
+        window.Streamlit.setFrameHeight(window.innerHeight || document.documentElement.clientHeight || 900);
     }}
 }}
 window.addEventListener('load', initStreamlit);
+window.addEventListener('resize', function() {{
+    if (window.Streamlit) window.Streamlit.setFrameHeight(window.innerHeight || 900);
+}});
 
 // Streamlit communication function
 function sendAction(data) {{
@@ -771,7 +777,7 @@ function showTab(tab) {{
                 </div>
                 <div class="log-box" style="flex:1;overflow-y:auto"><pre id="sqlmap-output">${{escapedContent}}</pre></div>
                 <div style="display:flex;gap:8px;align-items:center;background:var(--bg2);padding:8px;border-radius:4px">
-                    <textarea id="sqlmap-cmd" placeholder="sqlmap -u URL --batch ..." style="flex:1;background:var(--bg0);border:1px solid var(--bg3);color:var(--fg);padding:8px;border-radius:4px;font-family:inherit;font-size:11px;resize:none;height:40px">${{h.original_cmd || ''}}</textarea>
+                    <textarea id="sqlmap-cmd" placeholder="proxychains4 -q python3 /root/sqlmap/sqlmap.py -u URL --batch ..." style="flex:1;background:var(--bg0);border:1px solid var(--bg3);color:var(--fg);padding:8px;border-radius:4px;font-family:inherit;font-size:10px;resize:vertical;min-height:60px;max-height:120px;word-break:break-all;overflow-wrap:break-word">${{h.original_cmd || ''}}</textarea>
                     <div style="display:flex;flex-direction:column;gap:4px">
                         <button onclick="runSqlmap()" style="background:var(--green);color:var(--bg0);border:none;padding:6px 12px;border-radius:4px;cursor:pointer;font-family:inherit;font-weight:bold;font-size:10px">RUN</button>
                         <button onclick="stopSqlmap()" style="background:var(--red);color:var(--fg);border:none;padding:6px 12px;border-radius:4px;cursor:pointer;font-family:inherit;font-weight:bold;font-size:10px">STOP</button>
@@ -872,7 +878,8 @@ function clearOutput() {{
 '''
 
 # Render SQLMAP HTML and capture any action from component
-component_value = components.html(html, height=850, scrolling=False)
+component_value = components.html(html, height=0, scrolling=False)
+st.markdown("""<style>iframe[title="streamlit_components.v1.components.html"]{height:100vh!important;position:fixed!important;top:0!important;left:0!important;width:100vw!important;z-index:9999!important;border:none!important;}</style>""", unsafe_allow_html=True)
 
 # Process action from component value
 if component_value is not None and isinstance(component_value, dict):
