@@ -19,6 +19,21 @@ st.set_page_config(page_title="6319sqli", layout="wide", initial_sidebar_state="
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 DATA_DIR = os.path.join(SCRIPT_DIR, '.6319sqli_data')
 
+PROXYCHAINS_PREFIX = 'proxychains4 -q'
+
+def ensure_proxychains(cmd):
+    cmd = cmd.strip()
+    if not cmd:
+        return cmd
+    if cmd.startswith('proxychains'):
+        return cmd
+    if 'sqlmap' in cmd:
+        if cmd.startswith('python'):
+            return f'{PROXYCHAINS_PREFIX} {cmd}'
+        if cmd.startswith('/') or cmd.startswith('sqlmap'):
+            return f'{PROXYCHAINS_PREFIX} python3 {cmd}'
+    return cmd
+
 # Start action server in background thread
 import threading
 from http.server import HTTPServer, BaseHTTPRequestHandler
@@ -89,6 +104,7 @@ if '_action' in params:
     
     if action == 'run' and host and cmd:
         import threading
+        cmd = ensure_proxychains(cmd)
         output_file = get_host_output_file(host)
         
         def run_cmd_iframe():
@@ -168,6 +184,7 @@ if 'action' in params:
         host = params.get('host', '')
         if cmd and host:
             import threading
+            cmd = ensure_proxychains(cmd)
             output_file = get_host_output_file(host)
             
             def run_cmd():
@@ -258,6 +275,7 @@ if os.path.exists(ACTION_FILE):
             cmd = action_data.get('cmd', '')
             if host and cmd:
                 import threading as th
+                cmd = ensure_proxychains(cmd)
                 output_file = get_host_output_file(host)
                 
                 def run_cmd_action():
@@ -889,6 +907,7 @@ if component_value is not None and isinstance(component_value, dict):
     
     if action == 'run' and host and cmd:
         import threading as th2
+        cmd = ensure_proxychains(cmd)
         output_file = get_host_output_file(host)
         
         def run_from_component():
