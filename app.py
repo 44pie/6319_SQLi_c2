@@ -882,8 +882,15 @@ function clearOutput() {{
 '''
 
 # Render SQLMAP HTML and capture any action from component
-component_value = components.html(html, height=0, scrolling=False)
-st.markdown("""<style>iframe[title="streamlit_components.v1.components.html"]{height:100vh!important;position:fixed!important;top:0!important;left:0!important;width:100vw!important;z-index:9999!important;border:none!important;}</style>""", unsafe_allow_html=True)
+component_value = components.html(html, height=900, scrolling=False)
+st.markdown("""<style>
+[data-testid="stAppViewContainer"] > div > div > div > div {padding:0!important;}
+iframe[title="streamlit_components.v1.components.html"],
+iframe[title="streamlit_components.v1.components.html"] ~ div,
+div:has(> iframe[title="streamlit_components.v1.components.html"]) {
+    height:100vh!important;position:fixed!important;top:0!important;left:0!important;width:100vw!important;z-index:9999!important;border:none!important;
+}
+</style>""", unsafe_allow_html=True)
 
 # Process action from component value
 if component_value is not None and isinstance(component_value, dict):
