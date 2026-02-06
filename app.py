@@ -570,9 +570,9 @@ html = f'''
     --purple: #b48ead; --orange: #d08770; --cyan: #8fbcbb;
 }}
 * {{ margin: 0; padding: 0; box-sizing: border-box; }}
-html, body {{ height: 100%; width: 100%; overflow: hidden; }}
+html, body {{ height: 100%; width: 100%; overflow: hidden; margin: 0; padding: 0; }}
 body {{ font-family: 'JetBrains Mono', monospace; background: var(--bg0); color: var(--fg); }}
-.container {{ display: flex; flex-direction: column; height: 100%; padding: 8px; overflow: hidden; }}
+.container {{ display: flex; flex-direction: column; height: 100vh; padding: 8px; overflow: hidden; }}
 .header {{ display: flex; align-items: center; justify-content: space-between; background: var(--bg1); padding: 8px 16px; border-radius: 4px; margin-bottom: 8px; }}
 .logo {{ color: var(--accent); font-size: 14px; font-weight: bold; }}
 .stats {{ display: flex; gap: 24px; }}
@@ -892,6 +892,15 @@ function clearOutput() {{
         writeAction('clear', selected, '');
     }}
 }}
+
+function fitToWindow() {{
+    var h = window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight;
+    document.querySelector('.container').style.height = h + 'px';
+}}
+window.addEventListener('resize', fitToWindow);
+window.addEventListener('load', fitToWindow);
+fitToWindow();
+setInterval(fitToWindow, 1000);
 </script>
 </body>
 </html>
