@@ -361,24 +361,6 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
-# Hidden component to listen for postMessage from iframe
-import streamlit.components.v1 as components
-components.html("""
-<script>
-window.addEventListener('message', function(event) {
-    if (event.data && event.data.type === 'sqlmap_action') {
-        var action = event.data.action;
-        var host = event.data.host || '';
-        var cmd = event.data.cmd || '';
-        var url = window.top.location.origin + window.top.location.pathname + 
-            '?_action=' + encodeURIComponent(action) + 
-            '&_host=' + encodeURIComponent(host) + 
-            '&_cmd=' + encodeURIComponent(cmd);
-        window.top.location.href = url;
-    }
-});
-</script>
-""", height=0)
 
 CONFIG_FILE = os.path.expanduser('~/.6319sqli/config.json')
 PTY_OUTPUT_FILE = os.path.join(DATA_DIR, 'pty_output.json')
@@ -859,9 +841,13 @@ function writeAction(action, host, cmd) {{
         return;
     }}
     
-    // Fallback: PostMessage to all parents
+    // Fallback: use action server on port 5001
+    var port = 5001;
+    var url = window.location.protocol + '//' + window.location.hostname + ':' + port + '/?action=' + encodeURIComponent(action) + '&host=' + encodeURIComponent(host || '') + '&cmd=' + encodeURIComponent(cmd || '');
+    fetch(url).catch(function(e){{}});
+    
+    // Also try postMessage
     try {{ window.parent.postMessage({{type: 'sqlmap_action', ...actionData}}, '*'); }} catch(e) {{}}
-    try {{ window.parent.parent.postMessage({{type: 'sqlmap_action', ...actionData}}, '*'); }} catch(e) {{}}
 }}
 
 function runSqlmap() {{
