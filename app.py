@@ -594,12 +594,12 @@ body {{ font-family: 'JetBrains Mono', monospace; background: var(--bg0); color:
 .host:hover {{ background: var(--bg3); }}
 .host.selected {{ background: var(--bg3); border-color: var(--accent); }}
 .host.injected {{ border-left-color: var(--green); }}
-.host-domain {{ font-weight: 600; font-size: 12px; margin-bottom: 6px; padding-right: 80px; }}
+.host-domain {{ font-weight: 600; font-size: 12px; margin-bottom: 6px; padding-right: 100px; }}
 .host-domain::before {{ content: "● "; color: var(--yellow); }}
 .host.injected .host-domain::before {{ color: var(--green); }}
 .host-info {{ font-size: 10px; color: var(--fg3); line-height: 1.6; }}
 .host-info span {{ color: var(--accent); }}
-.host-badges {{ position: absolute; top: 8px; right: 8px; display: flex; flex-wrap: wrap; gap: 3px; max-width: 90px; justify-content: flex-end; }}
+.host-badges {{ position: absolute; top: 8px; right: 8px; display: flex; flex-wrap: wrap; gap: 3px; max-width: 100px; justify-content: flex-end; }}
 .badge {{ font-size: 8px; padding: 2px 5px; border-radius: 2px; font-weight: 500; }}
 .badge-inj {{ background: var(--green); color: var(--bg0); }}
 .badge-notinj {{ background: var(--yellow); color: var(--bg0); }}
