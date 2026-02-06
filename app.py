@@ -704,16 +704,25 @@ body {{ font-family: 'JetBrains Mono', monospace; background: var(--bg0); color:
 </div>
 <script>
 // Initialize Streamlit component communication
+function getParentHeight() {{
+    try {{ return window.parent.innerHeight; }} catch(e) {{ return 900; }}
+}}
 function initStreamlit() {{
     if (window.Streamlit) {{
         window.Streamlit.setComponentReady();
-        window.Streamlit.setFrameHeight(window.innerHeight || document.documentElement.clientHeight || 900);
+        var h = getParentHeight();
+        window.Streamlit.setFrameHeight(h);
+        document.querySelector('.container').style.height = h + 'px';
     }}
 }}
 window.addEventListener('load', initStreamlit);
-window.addEventListener('resize', function() {{
-    if (window.Streamlit) window.Streamlit.setFrameHeight(window.innerHeight || 900);
-}});
+function resizeFit() {{
+    var h = getParentHeight();
+    if (window.Streamlit) window.Streamlit.setFrameHeight(h);
+    document.querySelector('.container').style.height = h + 'px';
+}}
+window.addEventListener('resize', resizeFit);
+setInterval(resizeFit, 500);
 
 // Streamlit communication function
 function sendAction(data) {{
@@ -893,34 +902,13 @@ function clearOutput() {{
     }}
 }}
 
-function fitToWindow() {{
-    var h = window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight;
-    document.querySelector('.container').style.height = h + 'px';
-}}
-window.addEventListener('resize', fitToWindow);
-window.addEventListener('load', fitToWindow);
-fitToWindow();
-setInterval(fitToWindow, 1000);
 </script>
 </body>
 </html>
 '''
 
 # Render SQLMAP HTML and capture any action from component
-component_value = components.html(html, height=900, scrolling=False)
-st.markdown("""<style>
-iframe[title="streamlit_components.v1.components.html"] {
-    height:100vh!important;width:100vw!important;position:fixed!important;
-    top:0!important;left:0!important;z-index:9999!important;border:none!important;
-}
-div:has(> iframe[title="streamlit_components.v1.components.html"]),
-div[data-testid="stHtml"]:has(iframe),
-div[data-testid="element-container"]:has(iframe) {
-    height:100vh!important;width:100vw!important;position:fixed!important;
-    top:0!important;left:0!important;z-index:9998!important;
-    max-height:none!important;overflow:visible!important;
-}
-</style>""", unsafe_allow_html=True)
+component_value = components.html(html, height=2000, scrolling=False)
 
 # Process action from component value
 if component_value is not None and isinstance(component_value, dict):
