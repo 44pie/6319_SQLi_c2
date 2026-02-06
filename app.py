@@ -562,8 +562,9 @@ html = f'''
     --purple: #b48ead; --orange: #d08770; --cyan: #8fbcbb;
 }}
 * {{ margin: 0; padding: 0; box-sizing: border-box; }}
+html, body {{ height: 100%; width: 100%; overflow: hidden; }}
 body {{ font-family: 'JetBrains Mono', monospace; background: var(--bg0); color: var(--fg); }}
-.container {{ display: flex; flex-direction: column; height: 100vh; padding: 8px; }}
+.container {{ display: flex; flex-direction: column; height: 100%; padding: 8px; overflow: hidden; }}
 .header {{ display: flex; align-items: center; justify-content: space-between; background: var(--bg1); padding: 8px 16px; border-radius: 4px; margin-bottom: 8px; }}
 .logo {{ color: var(--accent); font-size: 14px; font-weight: bold; }}
 .stats {{ display: flex; gap: 24px; }}
@@ -573,7 +574,7 @@ body {{ font-family: 'JetBrains Mono', monospace; background: var(--bg0); color:
 .stat-green {{ color: var(--green); }}
 .stat-yellow {{ color: var(--yellow); }}
 .stat-gray {{ color: var(--fg3); }}
-.main {{ display: flex; gap: 8px; flex: 1; min-height: 0; }}
+.main {{ display: flex; gap: 8px; flex: 1; min-height: 0; overflow: hidden; }}
 .hosts-panel {{ width: 320px; background: var(--bg1); border-radius: 4px; display: flex; flex-direction: column; overflow: hidden; }}
 .panel-header {{ padding: 10px 12px; background: var(--bg2); font-size: 11px; letter-spacing: 2px; color: var(--fg3); display: flex; justify-content: space-between; align-items: center; }}
 .filter-tabs {{ display: flex; gap: 4px; }}
